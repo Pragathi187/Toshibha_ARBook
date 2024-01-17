@@ -1106,9 +1106,9 @@ MonoBehaviour:
   xrSessionOrigin: {fileID: 1092914329}
   canvasMenu: {fileID: 172824883}
   itemToSpawn:
-  - {fileID: 391410314638665622, guid: aafbc166a66986a449bd01f1b9a3aaa8, type: 3}
-  - {fileID: 533214966408615205, guid: eaf21a637f8c8044fa08c9d34643218a, type: 3}
-  - {fileID: 839737050552120297, guid: 605578e0abd59024883fed3530b482d6, type: 3}
+  - {fileID: 1716111664439686, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+  - {fileID: 5497254662541490085, guid: 8ef28c096798f6f48a3389bcdd791198, type: 3}
+  - {fileID: 100010, guid: 528b296222006d44ba3a021afb2b9e85, type: 3}
   buttons:
   - {fileID: 1080876750}
   - {fileID: 1397765213}
