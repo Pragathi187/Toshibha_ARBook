@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.Windows;
 
 public class ObjectPlacement : MonoBehaviour
 {
@@ -16,15 +18,16 @@ public class ObjectPlacement : MonoBehaviour
     public GameObject canvasMenu;
    
     
-    GameObject objectSpwaned;
+    public GameObject objectSpwaned;
    
     Pose placementpose;
     public GameObject[] itemToSpawn;
     public GameObject[] buttons;
-
+    public TMP_Text instruction_text;
     int objIndex;
 
-    public bool isDetecting = true;
+    bool isDetecting = true;
+    bool isSurfaceTracked = false;
     void Start()
     {
         
@@ -33,22 +36,34 @@ public class ObjectPlacement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+
+       
+        UpdateInstructionText();
+        TrackInput();
+
+
+    }
+    void TrackInput()
+    {
         //Detect user Touch
         //Project a Raycast
         //Instantiate Virtual object at point where ray interacts world
-        if(Input.GetMouseButton(0))
+        if (UnityEngine.Input.touchCount>0)
         {
-            Debug.Log("MouseClick");
-            bool isHit = xrSessionOrigin.GetComponent<ARRaycastManager>().Raycast(Input.mousePosition, raycastHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon);
+            
+            bool isHit = xrSessionOrigin.GetComponent<ARRaycastManager>().Raycast(UnityEngine.Input.GetTouch(0).position, raycastHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon);
 
-            if(isHit && !IsPointerOverUIObject())
+            if (isHit)
             {
-                if(objectSpwaned==null)
+                instruction_text.text = "";
+                if (objectSpwaned == null)
                 {
-                   
+
                     PlaceObject();
                     isDetecting = false;
                     canvasMenu.gameObject.SetActive(true);
+                    
 
 
                     foreach (var plane in xrSessionOrigin.GetComponent<ARPlaneManager>().trackables)
@@ -56,24 +71,29 @@ public class ObjectPlacement : MonoBehaviour
                         plane.gameObject.SetActive(false);
                     }
 
-                    //xrSessionOrigin.GetComponent<ARPlaneManager>().enabled = false;
+                    xrSessionOrigin.GetComponent<ARPlaneManager>().enabled = false;
                 }
 
                 objectSpwaned.transform.position = raycastHits[0].pose.position;
                 placementpose = raycastHits[0].pose;
+
             }
         }
     }
+    void UpdateInstructionText()
+    {
+        if(!isSurfaceTracked)
+        {
+            if (xrSessionOrigin.GetComponent<ARPlaneManager>().trackables.count > 0)
+            {
+                instruction_text.text = "Tap on the tracked surface to place object";
+                isSurfaceTracked = true;
+            }
+        }
+       
+        
 
-
-    //public void ChangeProduct(GameObject product)
-    //{
-    //    Destroy(objectSpwaned);
-    //    objectSpwaned = Instantiate(product);
-    //    objectSpwaned.transform.position=placementpose.position;
-
-    //}   
-
+    }
     public void PlaceObject()
     {
        
@@ -104,15 +124,15 @@ public class ObjectPlacement : MonoBehaviour
         objectSpwaned.transform.position = placementpose.position;
         
     }
-    private bool IsPointerOverUIObject()
-    {
-        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-        eventDataCurrentPosition.position= new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        List<RaycastResult> results = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-        return results.Count > 0;
+    //private bool IsPointerOverUIObject()
+    //{
+    //    //PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+    //    //eventDataCurrentPosition.position= new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+    //    //List<RaycastResult> results = new List<RaycastResult>();
+    //    //EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+    //    return results.Count > 0;
 
-    }
+    //}
 
     private void UpdateButtonOutline()
     {
@@ -123,5 +143,28 @@ public class ObjectPlacement : MonoBehaviour
         }
 
         buttons[objIndex].GetComponent<Outline>().enabled = true;
+    }
+
+
+    public void Reset()
+    {
+        isDetecting = true;
+
+        if (objectSpwaned != null) Destroy(objectSpwaned);
+        xrSessionOrigin.GetComponent<ARPlaneManager>().enabled = true;
+        instruction_text.text = "Move the Camera to scan the surface";
+        isSurfaceTracked=false;
+    }
+
+    public void Toggle()
+    {
+        for (int i = 0; i < buttons.Length; i++)
+        {
+
+            buttons[i].SetActive(!buttons[i].activeInHierarchy);
+
+
+        }
+
     }
 }

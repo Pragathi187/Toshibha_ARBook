@@ -7,7 +7,7 @@ public class LookAtTarget : MonoBehaviour
     public Transform target;
     void Start()
     {
-
+        target = GameObject.Find("Main Camera").GetComponent<Transform>();
     }
 
     void Update()
