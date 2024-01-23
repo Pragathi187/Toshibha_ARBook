@@ -16,10 +16,10 @@ public class ObjectPlacement : MonoBehaviour
     public XROrigin xrSessionOrigin;
     public List<ARRaycastHit> raycastHits = new List<ARRaycastHit>();
     public GameObject canvasMenu;
-   
-    
+
+
     public GameObject objectSpwaned;
-   
+
     Pose placementpose;
     public GameObject[] itemToSpawn;
     public GameObject[] buttons;
@@ -30,7 +30,7 @@ public class ObjectPlacement : MonoBehaviour
     bool isSurfaceTracked = false;
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -38,7 +38,7 @@ public class ObjectPlacement : MonoBehaviour
     {
 
 
-       
+
         UpdateInstructionText();
         TrackInput();
 
@@ -49,9 +49,9 @@ public class ObjectPlacement : MonoBehaviour
         //Detect user Touch
         //Project a Raycast
         //Instantiate Virtual object at point where ray interacts world
-        if (UnityEngine.Input.touchCount>0)
+        if (UnityEngine.Input.touchCount > 0)
         {
-            
+
             bool isHit = xrSessionOrigin.GetComponent<ARRaycastManager>().Raycast(UnityEngine.Input.GetTouch(0).position, raycastHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon);
 
             if (isHit)
@@ -63,7 +63,7 @@ public class ObjectPlacement : MonoBehaviour
                     PlaceObject();
                     isDetecting = false;
                     canvasMenu.gameObject.SetActive(true);
-                    
+
 
 
                     foreach (var plane in xrSessionOrigin.GetComponent<ARPlaneManager>().trackables)
@@ -76,13 +76,12 @@ public class ObjectPlacement : MonoBehaviour
 
                 objectSpwaned.transform.position = raycastHits[0].pose.position;
                 placementpose = raycastHits[0].pose;
-
             }
         }
     }
     void UpdateInstructionText()
     {
-        if(!isSurfaceTracked)
+        if (!isSurfaceTracked)
         {
             if (xrSessionOrigin.GetComponent<ARPlaneManager>().trackables.count > 0)
             {
@@ -90,17 +89,17 @@ public class ObjectPlacement : MonoBehaviour
                 isSurfaceTracked = true;
             }
         }
-       
-        
+
+
 
     }
     public void PlaceObject()
     {
-       
+
         if (isDetecting)
         {
             objIndex = 0;
-           
+
 
         }
         else
@@ -114,7 +113,6 @@ public class ObjectPlacement : MonoBehaviour
 
                     objIndex = i;
                 }
-               
             }
         }
 
@@ -122,7 +120,6 @@ public class ObjectPlacement : MonoBehaviour
         if (objectSpwaned != null) Destroy(objectSpwaned);
         objectSpwaned = Instantiate(itemToSpawn[objIndex]);
         objectSpwaned.transform.position = placementpose.position;
-        
     }
     //private bool IsPointerOverUIObject()
     //{
@@ -153,7 +150,7 @@ public class ObjectPlacement : MonoBehaviour
         if (objectSpwaned != null) Destroy(objectSpwaned);
         xrSessionOrigin.GetComponent<ARPlaneManager>().enabled = true;
         instruction_text.text = "Move the Camera to scan the surface";
-        isSurfaceTracked=false;
+        isSurfaceTracked = false;
     }
 
     public void Toggle()

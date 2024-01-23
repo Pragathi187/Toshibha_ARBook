@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Specialized;
+using System;
 
 public class SceneManager : MonoBehaviour
 {
@@ -18,6 +19,10 @@ public class SceneManager : MonoBehaviour
     private Button RotateBtn;
     [SerializeField]
     private Button MoveBtn;
+
+    public static event Action scaleBtnAction;
+    public static event Action rotationBtnAction;
+    public static event Action moveBtnAction;
 
     private void Awake()
     {
@@ -38,24 +43,19 @@ public class SceneManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
     }
 
+
     void OnScaleBtnClicked()
     {
-
+        scaleBtnAction();
     }
 
     void OnRotateBtnClicked()
     {
-
+        rotationBtnAction();
     }
 
     void OnMoveBtnClicked()
     {
-
-    }
-
-
-    void Update()
-    {
-
+        moveBtnAction();
     }
 }
