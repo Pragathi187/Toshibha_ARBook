@@ -5,6 +5,8 @@ using UnityEngine;
 public class LookAtTarget : MonoBehaviour
 {
     public Transform target;
+    public float damping = 1;
+
     void Start()
     {
         target = GameObject.Find("Main Camera").GetComponent<Transform>();
@@ -12,9 +14,7 @@ public class LookAtTarget : MonoBehaviour
 
     void Update()
     {
-        Vector3 targetPostition = new Vector3(target.position.x,
-                                       this.transform.position.y,
-                                       target.position.z);
-        this.transform.LookAt(targetPostition);
+        var rotation = Quaternion.LookRotation(transform.position - target.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * damping);
     }
 }

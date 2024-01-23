@@ -46,13 +46,16 @@ public class ObjectPlacement : MonoBehaviour
     }
     void TrackInput()
     {
-        //Detect user Touch
-        //Project a Raycast
-        //Instantiate Virtual object at point where ray interacts world
-        if (UnityEngine.Input.touchCount > 0)
+        Vector2 pos;
+#if UNITY_EDITOR
+        pos = UnityEngine.Input.mousePosition;
+#elif PLATFORM_ANDROID
+        pos = UnityEngine.Input.GetTouch(0).position
+#endif
+        if (UnityEngine.Input.touchCount > 0 || UnityEngine.Input.GetMouseButtonDown(0))
         {
 
-            bool isHit = xrSessionOrigin.GetComponent<ARRaycastManager>().Raycast(UnityEngine.Input.GetTouch(0).position, raycastHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon);
+            bool isHit = xrSessionOrigin.GetComponent<ARRaycastManager>().Raycast(pos, raycastHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon);
 
             if (isHit)
             {
