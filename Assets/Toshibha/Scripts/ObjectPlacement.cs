@@ -24,21 +24,24 @@ public class ObjectPlacement : MonoBehaviour
     public GameObject[] itemToSpawn;
     public GameObject[] buttons;
     public TMP_Text instruction_text;
+    public Image iconImage;
+
+    public Sprite scanSurfaceSprite;
+    public Sprite tapToPlaceSprite;
+
     int objIndex;
 
     bool isDetecting = true;
     bool isSurfaceTracked = false;
+
     void Start()
     {
-
+        iconImage.sprite = scanSurfaceSprite;
     }
 
     // Update is called once per frame
     void Update()
     {
-
-
-
         UpdateInstructionText();
         TrackInput();
 
@@ -50,9 +53,9 @@ public class ObjectPlacement : MonoBehaviour
 #if UNITY_EDITOR
         pos = UnityEngine.Input.mousePosition;
 #elif PLATFORM_ANDROID
-        pos = UnityEngine.Input.GetTouch(0).position
+        pos = UnityEngine.Input.GetTouch(0).position;
 #endif
-        if (UnityEngine.Input.touchCount > 0 || UnityEngine.Input.GetMouseButtonDown(0))
+        if ((UnityEngine.Input.touchCount > 0 || UnityEngine.Input.GetMouseButtonDown(0)) && !IsPointerOverUIObject(pos))
         {
 
             bool isHit = xrSessionOrigin.GetComponent<ARRaycastManager>().Raycast(pos, raycastHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon);
@@ -66,8 +69,6 @@ public class ObjectPlacement : MonoBehaviour
                     PlaceObject();
                     isDetecting = false;
                     canvasMenu.gameObject.SetActive(true);
-
-
 
                     foreach (var plane in xrSessionOrigin.GetComponent<ARPlaneManager>().trackables)
                     {
@@ -89,6 +90,7 @@ public class ObjectPlacement : MonoBehaviour
             if (xrSessionOrigin.GetComponent<ARPlaneManager>().trackables.count > 0)
             {
                 instruction_text.text = "Tap on the tracked surface to place object";
+                iconImage.sprite = tapToPlaceSprite;
                 isSurfaceTracked = true;
             }
         }
@@ -98,7 +100,6 @@ public class ObjectPlacement : MonoBehaviour
     }
     public void PlaceObject()
     {
-
         if (isDetecting)
         {
             objIndex = 0;
@@ -123,6 +124,7 @@ public class ObjectPlacement : MonoBehaviour
         if (objectSpwaned != null) Destroy(objectSpwaned);
         objectSpwaned = Instantiate(itemToSpawn[objIndex]);
         objectSpwaned.transform.position = placementpose.position;
+        iconImage.enabled = false;
     }
     //private bool IsPointerOverUIObject()
     //{
@@ -160,11 +162,18 @@ public class ObjectPlacement : MonoBehaviour
     {
         for (int i = 0; i < buttons.Length; i++)
         {
-
             buttons[i].SetActive(!buttons[i].activeInHierarchy);
-
-
         }
+
+    }
+
+    private bool IsPointerOverUIObject(Vector2 touchPosition)
+    {
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = touchPosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        return results.Count > 0;
 
     }
 }

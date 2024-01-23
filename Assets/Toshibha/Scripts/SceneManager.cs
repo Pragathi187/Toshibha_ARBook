@@ -46,16 +46,28 @@ public class SceneManager : MonoBehaviour
 
     void OnScaleBtnClicked()
     {
+        Debug.Log("Scale Presed");
         scaleBtnAction();
+        MoveBtn.interactable = true;
+        RotateBtn.interactable = true;
+        // ScaleBtn.interactable = false;
     }
 
     void OnRotateBtnClicked()
     {
+        Debug.Log("Rotate Presed");
         rotationBtnAction();
+        ScaleBtn.interactable = true;
+        MoveBtn.interactable = true;
+        // RotateBtn.interactable = false;
     }
 
     void OnMoveBtnClicked()
     {
         moveBtnAction();
+        Debug.Log("Move Presed");
+        ScaleBtn.interactable = true;
+        RotateBtn.interactable = true;
+        // MoveBtn.interactable = false;
     }
 }

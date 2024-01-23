@@ -9,6 +9,7 @@ public class LookAtTarget : MonoBehaviour
 
     void Start()
     {
+        damping = 5;
         target = GameObject.Find("Main Camera").GetComponent<Transform>();
     }
 
